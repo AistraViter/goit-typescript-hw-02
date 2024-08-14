@@ -7,23 +7,29 @@ import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn";
 import { fetchImages } from "../../gallery-api";
-import styles from "./App.module.css";
-const { container, header } = styles;
+import { Image } from "../../types/ImageTypes";
+import css from "./App.module.css";
 
-function App({ errorMessage }) {
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [loadMore, setLoadMore] = useState(false);
-  const [topic, setTopic] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+interface AppProps {
+  errorMessage?: string; // Може бути необов'язковим
+}
 
-  const imagesContainerRef = useRef(null); // Створення рефу
 
-  const handleSearch = async (newTopic) => {
+const App: React.FC<AppProps> = ({ errorMessage }) => {
+  const [images, setImages] = useState<Image[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState <boolean>(false);
+  const [loadMore, setLoadMore] = useState<boolean>(false);
+  const [topic, setTopic] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+
+
+  const imagesContainerRef = useRef<HTMLDivElement | null>(null); // Типізація рефу
+
+  const handleSearch = async (newTopic: string) => {
     setImages([]);
     setTopic(newTopic);
     setPage(1);
@@ -41,7 +47,7 @@ function App({ errorMessage }) {
       try {
         setLoading(true);
         setError(false);
-        const data = await fetchImages(topic, page, errorMessage);
+        const data = await fetchImages(topic, page);
         setImages((prevImages) => {
           return [...prevImages, ...data.results];
         });
@@ -81,9 +87,8 @@ function App({ errorMessage }) {
         imagesContainerRef.current.offsetTop +
         imagesContainerRef.current.clientHeight;
 
-      // Припустимо, що висота зображення є фіксованою або ви знаєте її
-      const imageHeight = 220; // Задайте висоту зображення (впишіть реальне значення)
-      const offset = imageHeight * 4; // Половина висоти зображення
+      const imageHeight = 220;
+      const offset = imageHeight * 4;
 
       window.scrollTo({
         top: containerBottom - offset, // Прокрутка до нижнього краю контейнера з підняттям на половину зображення
@@ -94,7 +99,7 @@ function App({ errorMessage }) {
 
   // Мадальне вікно
 
-  const openModal = (image) => {
+  const openModal = (image: Image) => {
     setSelectedImage(image);
     setModalIsOpen(true);
   };
@@ -106,10 +111,10 @@ function App({ errorMessage }) {
 
   return (
     <div>
-      <header className={header}>
+      <header className={css.header}>
         <SearchBar onSearch={handleSearch} />
       </header>
-      <div className={container} ref={imagesContainerRef}>
+      <div className={css.container} ref={imagesContainerRef}>
         {loading && <Loader />}
         {error && <ErrorMessage />}
         {images.length > 0 && (
@@ -118,7 +123,7 @@ function App({ errorMessage }) {
         {loadMore && page < totalPages && (
           <LoadMoreBtn onClick={handleLoadMore} />
         )}
-        {<Toaster />}
+        <Toaster />
         {selectedImage && (
           <ImageModal
             isOpen={modalIsOpen}
