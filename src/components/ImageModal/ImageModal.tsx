@@ -1,14 +1,8 @@
 import Modal from "react-modal";
 import css from "./ImageModal.module.css";
+import { Image } from "../../types/ImageTypes";
 
 Modal.setAppElement("#root");
-
-interface Image {
-  urls: {
-    regular: string;
-  };
-  alt_description?: string;
-}
 
 interface ImageModalProps {
   isOpen: boolean;

@@ -1,13 +1,5 @@
 import css from "./ImageCard.module.css";
-
-interface Image {
-  urls: {
-    small: string;
-  };
-  alt_description?: string;
-  width: number | null;
-  height: number | null;
-}
+import { Image } from "../../types/ImageTypes";
 
 interface ImageCardProps {
   image: Image;
