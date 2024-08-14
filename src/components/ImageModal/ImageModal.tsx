@@ -16,9 +16,12 @@ interface ImageModalProps {
   selectedImage?: Image | null; // Може бути undefined або null, якщо зображення не вибрано
 }
 
-
-
-const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onRequestClose, selectedImage }) => {
+const ImageModal: React.FC<ImageModalProps> = ({
+  isOpen,
+  onRequestClose,
+  selectedImage,
+}) => {
+  const imageUrl: string = selectedImage ? selectedImage.urls.regular : "";
 
   return (
     <Modal
@@ -28,17 +31,22 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onRequestClose, selecte
       className={css.imageModalContent}
       overlayClassName={css.imageModalOverlay}
     >
-      {
-        selectedImage && (
-          <div className={css.imageModalContainer} onClick={onRequestClose}>
+      {selectedImage && (
+        <div className={css.imageModalContainer} onClick={onRequestClose}>
+          {imageUrl ? (
             <img
               src={selectedImage.urls.regular}
               alt={selectedImage.alt_description || "Image without description"}
-              onClick={(e: React.MouseEvent<HTMLImageElement>) => e.stopPropagation()} // Типізація обробника події
-              />
-          </div>
-        )
-      }
+              onClick={(e: React.MouseEvent<HTMLImageElement>) =>
+                e.stopPropagation()
+              } // Типізація обробника події
+            />
+          ) : (
+            <span>No image available</span>
+          )}
+        </div>
+      )}
     </Modal>
-)};
+  );
+};
 export default ImageModal;
