@@ -1,28 +1,41 @@
 import Modal from "react-modal";
-import modalstyles from "./ImageModal.module.css";
+import css from "./ImageModal.module.css";
 
 Modal.setAppElement("#root");
 
-const ImageModal = ({ isOpen, onRequestClose, selectedImage }) => {
-    const { imageModalContent, imageModalOverlay, imageModalContainer } =
-    modalstyles;
+interface Image {
+  urls: {
+    regular: string;
+  };
+  alt_description?: string;
+}
+
+interface ImageModalProps {
+  isOpen: boolean;
+  onRequestClose: () => void;
+  selectedImage?: Image | null; // Може бути undefined або null, якщо зображення не вибрано
+}
+
+
+
+const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onRequestClose, selectedImage }) => {
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
       contentLabel="Image Modal"
-      className={imageModalContent}
-      overlayClassName={imageModalOverlay}
+      className={css.imageModalContent}
+      overlayClassName={css.imageModalOverlay}
     >
       {
         selectedImage && (
-          <div className={imageModalContainer} onClick={onRequestClose}>
+          <div className={css.imageModalContainer} onClick={onRequestClose}>
             <img
               src={selectedImage.urls.regular}
-              alt={selectedImage.alt_description}
-              onClick={(e) => e.stopPropagation()} // Зупиняє подію закриття при кліку на зображення
-            />
+              alt={selectedImage.alt_description || "Image without description"}
+              onClick={(e: React.MouseEvent<HTMLImageElement>) => e.stopPropagation()} // Типізація обробника події
+              />
           </div>
         )
       }
